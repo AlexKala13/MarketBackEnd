@@ -18,7 +18,7 @@ namespace MarketBackEnd.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<ServiceResponse<Guid>>> Register(UserRegisterDTO request)
+        public async Task<ActionResult<ServiceResponse<int>>> Register(UserRegisterDTO request)
         {
             var response = await _authRepository.Register(new User
             {

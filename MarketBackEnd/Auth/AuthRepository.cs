@@ -21,7 +21,7 @@ namespace MarketBackEnd.Auth
         public async Task<ServiceResponse<string>> Login(string email, string password)
         {
             var response = new ServiceResponse<string>();
-            var user = await _db.users.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
             if (user == null)
             {
                 response.Success = false;
@@ -39,9 +39,9 @@ namespace MarketBackEnd.Auth
             return response;
         }
 
-        public async Task<ServiceResponse<Guid>> Register(User user, string password)
+        public async Task<ServiceResponse<int>> Register(User user, string password)
         {
-            var response = new ServiceResponse<Guid>();
+            var response = new ServiceResponse<int>();
 
             if (await UserExists(user.Email))
             {
@@ -54,7 +54,7 @@ namespace MarketBackEnd.Auth
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            await _db.users.AddAsync(user);
+            await _db.Users.AddAsync(user);
             await _db.SaveChangesAsync();
             response.Data = user.Id;
             return response;
@@ -62,7 +62,7 @@ namespace MarketBackEnd.Auth
 
         public async Task<bool> UserExists(string email)
         {
-            if (await _db.users.AnyAsync(x => x.Email.ToLower() == email.ToLower()))
+            if (await _db.Users.AnyAsync(x => x.Email.ToLower() == email.ToLower()))
             {
                 return true;
             }

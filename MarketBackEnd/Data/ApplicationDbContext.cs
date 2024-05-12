@@ -10,6 +10,9 @@ namespace MarketBackEnd.Data
             
         }
 
-        public DbSet<User> users => Set<User>();
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Advertisement> Advertisements => Set<Advertisement>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<Photos> Photos => Set<Photos>();
     }
 }
