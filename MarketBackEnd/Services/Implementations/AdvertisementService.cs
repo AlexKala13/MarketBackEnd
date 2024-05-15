@@ -20,6 +20,37 @@ namespace MarketBackEnd.Services.Implementations
             _mapper = mapper;
         }
 
+        public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(CreateAdvertisementDTO newAd)
+        {
+            var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
+            var advertisement = _mapper.Map<Advertisement>(newAd);
+
+            if (newAd.Photos != null && newAd.Photos.Count > 0)
+            {
+                advertisement.Photos = new List<Photos>();
+                foreach (var photoBytes in newAd.Photos)
+                {
+                    var photo = new Photos
+                    {
+                        Image = photoBytes,
+                        IsMain = false
+                    };
+                    advertisement.Photos.Add(photo);
+                }
+
+                if (advertisement.Photos.Count > 0)
+                {
+                    advertisement.Photos.ElementAt(0).IsMain = true;
+                }
+            }
+
+            _db.Advertisements.Add(advertisement);
+            await _db.SaveChangesAsync();
+
+            serviceResponse.Data = _mapper.Map<GetAdvertisementDTO>(advertisement);
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<GetAdvertisementWithPhotosDTO>> GetAdvertisementById(int id)
         {
             var serviceResponse = new ServiceResponse<GetAdvertisementWithPhotosDTO>();

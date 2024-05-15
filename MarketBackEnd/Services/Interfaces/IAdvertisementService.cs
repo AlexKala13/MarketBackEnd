@@ -1,4 +1,5 @@
 ﻿using MarketBackEnd.DTOs.AdsWithPhoto;
+using MarketBackEnd.DTOs.Advertisement;
 using MarketBackEnd.Model;
 
 namespace MarketBackEnd.Services.Interfaces
@@ -7,5 +8,6 @@ namespace MarketBackEnd.Services.Interfaces
     {
         Task<ServiceResponse<List<GetAdsWithPhotosDTO>>> GetAdvertisements(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status);
         Task<ServiceResponse<GetAdvertisementWithPhotosDTO>> GetAdvertisementById(int id);
+        Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(CreateAdvertisementDTO newAd);
     }
 }

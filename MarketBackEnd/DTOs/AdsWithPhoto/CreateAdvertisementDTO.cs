@@ -1,10 +1,7 @@
-﻿using MarketBackEnd.Model;
-
-namespace MarketBackEnd.DTOs.Advertisement
+﻿namespace MarketBackEnd.DTOs.AdsWithPhoto
 {
-    public class GetAdvertisementDTO
+    public class CreateAdvertisementDTO
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int CategoryId { get; set; }
@@ -12,6 +9,6 @@ namespace MarketBackEnd.DTOs.Advertisement
         public DateTime PostDate { get; set; }
         public DateTime DueDate { get; set; }
         public int Status { get; set; }
-        public List<Photos> Photos { get; set; }
+        public List<byte[]> Photos { get; set; }
     }
 }

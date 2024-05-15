@@ -27,5 +27,16 @@ namespace MarketBackEnd.Controllers
         {
             return await _advertisementService.GetAdvertisements(name, categoryId, priceMin, priceMax, postDate, status);
         }
+
+        [HttpPost("UploadAdvertisement")]
+        public async Task<IActionResult> AddAdvertisement([FromBody] CreateAdvertisementDTO newAd)
+        {
+            var response = await _advertisementService.AddAdvertisement(newAd);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
     }
 }
