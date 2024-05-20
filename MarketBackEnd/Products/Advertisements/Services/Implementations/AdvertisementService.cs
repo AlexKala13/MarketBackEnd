@@ -50,6 +50,93 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<string>> DeleteAdvertisement(int id)
+        {
+            var serviceResponse = new ServiceResponse<string>();
+            try
+            {
+                var advertisement = await _db.Advertisements.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
+                if (advertisement == null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Advertisement not found.";
+                    return serviceResponse;
+                }
+
+                if (advertisement.Photos != null && advertisement.Photos.Any())
+                {
+                    _db.Photos.RemoveRange(advertisement.Photos);
+                }
+
+                _db.Advertisements.Remove(advertisement);
+                await _db.SaveChangesAsync();
+
+                serviceResponse.Data = "Advertisement deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Failed to delete advertisement: " + ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetAdvertisementDTO>> EditAdvertisement(int id, EditAdvertisementDTO updatedAd)
+        {
+            var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
+            try
+            {
+                var advertisement = await _db.Advertisements.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
+                if (advertisement == null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Advertisement not found.";
+                    return serviceResponse;
+                }
+
+                advertisement.Name = updatedAd.Name ?? advertisement.Name;
+                advertisement.Description = updatedAd.Description ?? advertisement.Description;
+                advertisement.CategoryId = updatedAd.CategoryId ?? advertisement.CategoryId;
+                advertisement.Price = updatedAd.Price ?? advertisement.Price;
+                advertisement.Status = updatedAd.Status ?? advertisement.Status;
+
+                if (updatedAd.Photos != null && updatedAd.Photos.Any())
+                {
+                    _db.Photos.RemoveRange(advertisement.Photos);
+
+                    advertisement.Photos = new List<Photos>();
+                    foreach (var photoBytes in updatedAd.Photos)
+                    {
+                        var photo = new Photos
+                        {
+                            AdvertisementId = advertisement.Id,
+                            Image = photoBytes,
+                            IsMain = false
+                        };
+                        advertisement.Photos.Add(photo);
+                    }
+
+                    if (advertisement.Photos.Count > 0)
+                    {
+                        advertisement.Photos.ElementAt(0).IsMain = true;
+                    }
+                }
+
+                _db.Advertisements.Update(advertisement);
+                await _db.SaveChangesAsync();
+
+                serviceResponse.Data = _mapper.Map<GetAdvertisementDTO>(advertisement);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Failed to update advertisement: " + ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<GetAdvertisementDTO>> GetAdvertisementById(int id)
         {
             var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();

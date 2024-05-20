@@ -22,13 +22,13 @@ namespace MarketBackEnd.Products.Advertisements.Controllers
             return await _advertisementService.GetAdvertisementById(id);
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<ActionResult<ServiceResponse<List<GetAdvertisementsDTO>>>> GetAll(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status)
         {
             return await _advertisementService.GetAdvertisements(name, categoryId, priceMin, priceMax, postDate, status);
         }
 
-        [HttpPost("UploadAdvertisement")]
+        [HttpPost("Upload")]
         public async Task<IActionResult> AddAdvertisement([FromBody] CreateAdvertisementDTO newAd)
         {
             var response = await _advertisementService.AddAdvertisement(newAd);
@@ -37,6 +37,18 @@ namespace MarketBackEnd.Products.Advertisements.Controllers
                 return Ok(response);
             }
             return BadRequest(response);
+        }
+
+        [HttpPut("Edit/{id}")]
+        public async Task<ActionResult<ServiceResponse<GetAdvertisementDTO>>> UpdateAdvertisement(int id, EditAdvertisementDTO updatedAd)
+        {
+            return await _advertisementService.EditAdvertisement(id, updatedAd);
+        }
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<ActionResult<ServiceResponse<string>>> DeleteAdvertisement(int id)
+        {
+            return await _advertisementService.DeleteAdvertisement(id);
         }
     }
 }
