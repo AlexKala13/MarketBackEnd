@@ -1,4 +1,5 @@
-﻿using MarketBackEnd.Model;
+﻿using MarketBackEnd.DTOs.Photo;
+using MarketBackEnd.Model;
 
 namespace MarketBackEnd.DTOs.Advertisement
 {

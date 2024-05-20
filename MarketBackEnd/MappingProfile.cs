@@ -13,8 +13,8 @@ namespace MarketBackEnd
             CreateMap<Advertisement, GetAdvertisementDTO>().ReverseMap();
             CreateMap<Advertisement, GetAdvertisementsDTO>().ReverseMap();
             CreateMap<Photos, GetPhotoDTO>().ReverseMap();
-            CreateMap<CreateAdvertisementDTO, Advertisement>()
-                .ForMember(dest => dest.Photos, opt => opt.Ignore());
+            //CreateMap<CreateAdvertisementDTO, Advertisement>()
+            //    .ForMember(dest => dest.Photos, opt => opt.Ignore());
         }
     }
 }

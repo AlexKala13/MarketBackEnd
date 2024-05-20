@@ -1,4 +1,5 @@
 ﻿using MarketBackEnd.DTOs.AdsWithPhoto;
+using MarketBackEnd.DTOs.Advertisement;
 using MarketBackEnd.Model;
 using MarketBackEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -17,26 +18,26 @@ namespace MarketBackEnd.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceResponse<GetAdvertisementWithPhotosDTO>>> GetSingle(int id)
+        public async Task<ActionResult<ServiceResponse<GetAdvertisementDTO>>> GetSingle(int id)
         {
             return await _advertisementService.GetAdvertisementById(id);
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<GetAdsWithPhotosDTO>>>> GetAll(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status)
+        public async Task<ActionResult<ServiceResponse<List<GetAdvertisementsDTO>>>> GetAll(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status)
         {
             return await _advertisementService.GetAdvertisements(name, categoryId, priceMin, priceMax, postDate, status);
         }
 
-        [HttpPost("UploadAdvertisement")]
-        public async Task<IActionResult> AddAdvertisement([FromBody] CreateAdvertisementDTO newAd)
-        {
-            var response = await _advertisementService.AddAdvertisement(newAd);
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
-        }
+        //[HttpPost("UploadAdvertisement")]
+        //public async Task<IActionResult> AddAdvertisement([FromBody] CreateAdvertisementDTO newAd)
+        //{
+        //    var response = await _advertisementService.AddAdvertisement(newAd);
+        //    if (response.Success)
+        //    {
+        //        return Ok(response);
+        //    }
+        //    return BadRequest(response);
+        //}
     }
 }

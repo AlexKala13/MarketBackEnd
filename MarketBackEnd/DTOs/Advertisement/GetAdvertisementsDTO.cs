@@ -1,4 +1,7 @@
-﻿namespace MarketBackEnd.DTOs.Advertisement
+﻿using MarketBackEnd.DTOs.Photo;
+using MarketBackEnd.Model;
+
+namespace MarketBackEnd.DTOs.Advertisement
 {
     public class GetAdvertisementsDTO
     {
@@ -8,5 +11,6 @@
         public decimal Price { get; set; }
         public DateTime PostDate { get; set; }
         public int Status { get; set; }
+        public Photos? Photo { get; set; }
     }
 }

@@ -20,40 +20,40 @@ namespace MarketBackEnd.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(CreateAdvertisementDTO newAd)
+        //public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(CreateAdvertisementDTO newAd)
+        //{
+        //    var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
+        //    var advertisement = _mapper.Map<Advertisement>(newAd);
+
+        //    if (newAd.Photos != null && newAd.Photos.Count > 0)
+        //    {
+        //        advertisement.Photos = new List<Photos>();
+        //        foreach (var photoBytes in newAd.Photos)
+        //        {
+        //            var photo = new Photos
+        //            {
+        //                Image = photoBytes,
+        //                IsMain = false
+        //            };
+        //            advertisement.Photos.Add(photo);
+        //        }
+
+        //        if (advertisement.Photos.Count > 0)
+        //        {
+        //            advertisement.Photos.ElementAt(0).IsMain = true;
+        //        }
+        //    }
+
+        //    _db.Advertisements.Add(advertisement);
+        //    await _db.SaveChangesAsync();
+
+        //    serviceResponse.Data = _mapper.Map<GetAdvertisementDTO>(advertisement);
+        //    return serviceResponse;
+        //}
+
+        public async Task<ServiceResponse<GetAdvertisementDTO>> GetAdvertisementById(int id)
         {
             var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
-            var advertisement = _mapper.Map<Advertisement>(newAd);
-
-            if (newAd.Photos != null && newAd.Photos.Count > 0)
-            {
-                advertisement.Photos = new List<Photos>();
-                foreach (var photoBytes in newAd.Photos)
-                {
-                    var photo = new Photos
-                    {
-                        Image = photoBytes,
-                        IsMain = false
-                    };
-                    advertisement.Photos.Add(photo);
-                }
-
-                if (advertisement.Photos.Count > 0)
-                {
-                    advertisement.Photos.ElementAt(0).IsMain = true;
-                }
-            }
-
-            _db.Advertisements.Add(advertisement);
-            await _db.SaveChangesAsync();
-
-            serviceResponse.Data = _mapper.Map<GetAdvertisementDTO>(advertisement);
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<GetAdvertisementWithPhotosDTO>> GetAdvertisementById(int id)
-        {
-            var serviceResponse = new ServiceResponse<GetAdvertisementWithPhotosDTO>();
             try
             {
                 var advertisement = await _db.Advertisements.FirstOrDefaultAsync(x => x.Id == id);
@@ -62,15 +62,8 @@ namespace MarketBackEnd.Services.Implementations
                 if (advertisement != null)
                 {
                     var advertisementDTO = _mapper.Map<GetAdvertisementDTO>(advertisement);
-                    var photosDTO = _mapper.Map<List<GetPhotoDTO>>(photos);
 
-                    var advertisementWithPhotosDTO = new GetAdvertisementWithPhotosDTO
-                    {
-                        AdverisementInfo = advertisementDTO,
-                        Photos = photosDTO
-                    };
-
-                    serviceResponse.Data = advertisementWithPhotosDTO;
+                    serviceResponse.Data = advertisementDTO;
                 }
                 else
                 {
@@ -86,9 +79,9 @@ namespace MarketBackEnd.Services.Implementations
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetAdsWithPhotosDTO>>> GetAdvertisements(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status)
+        public async Task<ServiceResponse<List<GetAdvertisementsDTO>>> GetAdvertisements(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status)
         {
-            var serviceResponse = new ServiceResponse<List<GetAdsWithPhotosDTO>>();
+            var serviceResponse = new ServiceResponse<List<GetAdvertisementsDTO>>();
             try
             {
                 var query = _db.Advertisements.AsQueryable();
@@ -121,18 +114,21 @@ namespace MarketBackEnd.Services.Implementations
                 var advertisements = await query.ToListAsync();
                 var photos = await _db.Photos.Where(x => x.IsMain == true).ToListAsync();
 
-                if (advertisements != null)
+                if (advertisements.Any())
                 {
-                    var advertisementsDTO = _mapper.Map<List<GetAdvertisementsDTO>>(advertisements);
-                    var photosDTO = _mapper.Map<List<GetPhotoDTO>>(photos);
 
-                    var advertisementsWithPhotosDTO = new GetAdsWithPhotosDTO
+                    var advertisementsDTO = advertisements.Select(advertisement => new GetAdvertisementsDTO
                     {
-                        Advertisements = advertisementsDTO,
-                        Photos = photosDTO
-                    };
+                        Id = advertisement.Id,
+                        Name = advertisement.Name,
+                        CategoryId = advertisement.CategoryId,
+                        Price = advertisement.Price,
+                        PostDate = advertisement.PostDate,
+                        Status = advertisement.Status,
+                        Photo = photos.FirstOrDefault(p => p.AdvertisementId == advertisement.Id)
+                    }).ToList();
 
-                    serviceResponse.Data = new List<GetAdsWithPhotosDTO> { advertisementsWithPhotosDTO };
+                    serviceResponse.Data = advertisementsDTO;
                 }
                 else
                 {
@@ -147,6 +143,7 @@ namespace MarketBackEnd.Services.Implementations
             }
             return serviceResponse;
         }
+
 
     }
 }

@@ -6,8 +6,8 @@ namespace MarketBackEnd.Services.Interfaces
 {
     public interface IAdvertisementService
     {
-        Task<ServiceResponse<List<GetAdsWithPhotosDTO>>> GetAdvertisements(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status);
-        Task<ServiceResponse<GetAdvertisementWithPhotosDTO>> GetAdvertisementById(int id);
-        Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(CreateAdvertisementDTO newAd);
+        Task<ServiceResponse<List<GetAdvertisementsDTO>>> GetAdvertisements(string? name, int? categoryId, decimal? priceMin, decimal? priceMax, DateTime? postDate, int? status);
+        Task<ServiceResponse<GetAdvertisementDTO>> GetAdvertisementById(int id);
+        //Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(CreateAdvertisementDTO newAd);
     }
 }
