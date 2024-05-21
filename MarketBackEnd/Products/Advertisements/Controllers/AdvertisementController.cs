@@ -1,6 +1,7 @@
 ﻿using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
 using MarketBackEnd.Products.Advertisements.Services.Interfaces;
 using MarketBackEnd.Shared.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarketBackEnd.Products.Advertisements.Controllers
@@ -28,10 +29,11 @@ namespace MarketBackEnd.Products.Advertisements.Controllers
             return await _advertisementService.GetAdvertisements(name, categoryId, priceMin, priceMax, postDate, status);
         }
 
+        [Authorize]
         [HttpPost("Upload")]
-        public async Task<IActionResult> AddAdvertisement([FromBody] CreateAdvertisementDTO newAd)
+        public async Task<IActionResult> AddAdvertisement([FromBody] CreateAdvertisementDTO newAd, int userId)
         {
-            var response = await _advertisementService.AddAdvertisement(newAd);
+            var response = await _advertisementService.AddAdvertisement(userId, newAd);
             if (response.Success)
             {
                 return Ok(response);
@@ -39,16 +41,18 @@ namespace MarketBackEnd.Products.Advertisements.Controllers
             return BadRequest(response);
         }
 
+        [Authorize]
         [HttpPut("Edit/{id}")]
-        public async Task<ActionResult<ServiceResponse<GetAdvertisementDTO>>> UpdateAdvertisement(int id, EditAdvertisementDTO updatedAd)
+        public async Task<ActionResult<ServiceResponse<GetAdvertisementDTO>>> UpdateAdvertisement(int id, int userId, EditAdvertisementDTO updatedAd)
         {
-            return await _advertisementService.EditAdvertisement(id, updatedAd);
+            return await _advertisementService.EditAdvertisement(id, userId, updatedAd);
         }
 
+        [Authorize]
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult<ServiceResponse<string>>> DeleteAdvertisement(int id)
+        public async Task<ActionResult<ServiceResponse<string>>> DeleteAdvertisement(int id, int userId)
         {
-            return await _advertisementService.DeleteAdvertisement(id);
+            return await _advertisementService.DeleteAdvertisement(id, userId);
         }
     }
 }

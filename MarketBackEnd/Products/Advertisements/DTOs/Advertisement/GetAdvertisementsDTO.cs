@@ -11,5 +11,6 @@ namespace MarketBackEnd.Products.Advertisements.DTOs.Advertisement
         public DateTime PostDate { get; set; }
         public int Status { get; set; }
         public Photos? Photo { get; set; }
+        public int UserId { get; set; }
     }
 }
