@@ -4,6 +4,7 @@ using MarketBackEnd.Products.Advertisements.Models;
 using MarketBackEnd.Products.Advertisements.Services.Interfaces;
 using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
+using MarketBackEnd.Users.Auth.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace MarketBackEnd.Products.Advertisements.Services.Implementations
@@ -12,17 +13,20 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public AdvertisementService(ApplicationDbContext db, IMapper mapper)
+        public AdvertisementService(ApplicationDbContext db, IMapper mapper, IUserService userService)
         {
             _db = db;
             _mapper = mapper;
+            _userService = userService;
         }
 
-        public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(CreateAdvertisementDTO newAd)
+        public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(int userId, CreateAdvertisementDTO newAd)
         {
             var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
             var advertisement = _mapper.Map<Advertisement>(newAd);
+            advertisement.UserId = userId;
 
             if (newAd.Photos != null && newAd.Photos.Count > 0)
             {
@@ -50,16 +54,16 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<string>> DeleteAdvertisement(int id)
+        public async Task<ServiceResponse<string>> DeleteAdvertisement(int id, int userId)
         {
             var serviceResponse = new ServiceResponse<string>();
             try
             {
                 var advertisement = await _db.Advertisements.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
-                if (advertisement == null)
+                if (advertisement == null || (!(_userService.IsAuthor(userId, advertisement.UserId) || _userService.IsAdmin(userId))))
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = "Advertisement not found.";
+                    serviceResponse.Message = "Advertisement not found or access denied.";
                     return serviceResponse;
                 }
 
@@ -82,16 +86,16 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetAdvertisementDTO>> EditAdvertisement(int id, EditAdvertisementDTO updatedAd)
+        public async Task<ServiceResponse<GetAdvertisementDTO>> EditAdvertisement(int id, int userId, EditAdvertisementDTO updatedAd)
         {
             var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
             try
             {
                 var advertisement = await _db.Advertisements.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
-                if (advertisement == null)
+                if (advertisement == null || (!(_userService.IsAuthor(userId, advertisement.UserId) || _userService.IsAdmin(userId))))
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = "Advertisement not found.";
+                    serviceResponse.Message = "Advertisement not found or access denied.";
                     return serviceResponse;
                 }
 
@@ -229,7 +233,5 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
             }
             return serviceResponse;
         }
-
-
     }
 }

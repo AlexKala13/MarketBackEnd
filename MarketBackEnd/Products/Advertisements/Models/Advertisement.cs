@@ -1,4 +1,6 @@
-﻿namespace MarketBackEnd.Products.Advertisements.Models
+﻿using MarketBackEnd.Users.Auth.Models;
+
+namespace MarketBackEnd.Products.Advertisements.Models
 {
     public class Advertisement
     {
@@ -12,5 +14,7 @@
         public DateTime DueDate { get; set; }
         public int Status { get; set; }
         public ICollection<Photos>? Photos { get; set; }
+        public User User { get; set; }
+        public int UserId { get; set; }
     }
 }
