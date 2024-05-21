@@ -1,12 +1,22 @@
-﻿using MarketBackEnd.Users.Auth.Services.Interfaces;
+﻿using MarketBackEnd.Shared.Data;
+using MarketBackEnd.Users.Auth.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace MarketBackEnd.Users.Auth.Services.Implementations
 {
     public class UserService : IUserService
     {
-        public bool IsAdmin(int userId)
+        private readonly ApplicationDbContext _db;
+
+        public UserService(ApplicationDbContext db)
         {
-            return userId == 0;
+            _db = db;
+        }
+
+        public async Task<bool> IsAdmin(int userId)
+        {
+            var user = await _db.Users.FindAsync(userId);
+            return user != null && user.IsAdmin;
         }
 
         public bool IsAuthor(int userId, int advertisementUserId)

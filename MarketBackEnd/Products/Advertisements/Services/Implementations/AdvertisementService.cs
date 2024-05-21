@@ -60,10 +60,20 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
             try
             {
                 var advertisement = await _db.Advertisements.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
-                if (advertisement == null || (!(_userService.IsAuthor(userId, advertisement.UserId) || _userService.IsAdmin(userId))))
+                if (advertisement == null)
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = "Advertisement not found or access denied.";
+                    serviceResponse.Message = "Advertisement not found.";
+                    return serviceResponse;
+                }
+
+                bool isAuthor = _userService.IsAuthor(userId, advertisement.UserId);
+                bool isAdmin = await _userService.IsAdmin(userId);
+
+                if (!isAuthor && !isAdmin)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Access denied.";
                     return serviceResponse;
                 }
 
@@ -92,10 +102,20 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
             try
             {
                 var advertisement = await _db.Advertisements.Include(a => a.Photos).FirstOrDefaultAsync(a => a.Id == id);
-                if (advertisement == null || (!(_userService.IsAuthor(userId, advertisement.UserId) || _userService.IsAdmin(userId))))
+                if (advertisement == null)
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = "Advertisement not found or access denied.";
+                    serviceResponse.Message = "Advertisement not found.";
+                    return serviceResponse;
+                }
+
+                bool isAuthor = _userService.IsAuthor(userId, advertisement.UserId);
+                bool isAdmin = await _userService.IsAdmin(userId);
+
+                if (!isAuthor && !isAdmin)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Access denied.";
                     return serviceResponse;
                 }
 

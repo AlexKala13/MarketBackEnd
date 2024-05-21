@@ -10,5 +10,7 @@
         public string Telephone { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+        public bool IsVerified { get; set; } = false;
+        public bool IsAdmin { get; set; } = false;
     }
 }
