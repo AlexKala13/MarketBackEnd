@@ -1,4 +1,4 @@
-﻿using MarketBackEnd.Users.Auth.Models;
+﻿using MarketBackEnd.Shared.Model;
 
 namespace MarketBackEnd.Products.Advertisements.Models
 {

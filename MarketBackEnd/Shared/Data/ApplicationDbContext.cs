@@ -1,6 +1,6 @@
 ﻿using MarketBackEnd.Products.Advertisements.Models;
 using Microsoft.EntityFrameworkCore;
-using MarketBackEnd.Users.Auth.Models;
+using MarketBackEnd.Shared.Model;
 
 namespace MarketBackEnd.Shared.Data
 {

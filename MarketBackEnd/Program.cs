@@ -3,6 +3,8 @@ using MarketBackEnd.Products.Advertisements.Services.Interfaces;
 using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Users.Auth.Services.Implementations;
 using MarketBackEnd.Users.Auth.Services.Interfaces;
+using MarketBackEnd.Users.Customer.Services.Implementations;
+using MarketBackEnd.Users.Customer.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

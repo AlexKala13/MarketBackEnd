@@ -1,4 +1,4 @@
-﻿namespace MarketBackEnd.Users.Auth.Models
+﻿namespace MarketBackEnd.Shared.Model
 {
     public class User
     {
