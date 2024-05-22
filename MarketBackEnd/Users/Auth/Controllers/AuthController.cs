@@ -1,6 +1,5 @@
 ﻿using MarketBackEnd.Shared.Model;
 using MarketBackEnd.Users.Auth.DTOs;
-using MarketBackEnd.Users.Auth.Models;
 using MarketBackEnd.Users.Auth.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

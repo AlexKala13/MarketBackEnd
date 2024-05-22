@@ -1,6 +1,5 @@
 ﻿using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
-using MarketBackEnd.Users.Auth.Models;
 using MarketBackEnd.Users.Auth.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -71,7 +70,7 @@ namespace MarketBackEnd.Users.Auth.Services.Implementations
             return false;
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {

@@ -4,7 +4,7 @@ using MarketBackEnd.Products.Advertisements.Models;
 using MarketBackEnd.Products.Advertisements.Services.Interfaces;
 using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
-using MarketBackEnd.Users.Auth.Services.Interfaces;
+using MarketBackEnd.Users.Customer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace MarketBackEnd.Products.Advertisements.Services.Implementations
