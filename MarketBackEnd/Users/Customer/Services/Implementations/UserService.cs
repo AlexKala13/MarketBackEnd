@@ -45,6 +45,7 @@ namespace MarketBackEnd.Users.Customer.Services.Implementations
                 User.LastName = updatedUser.LastName ?? User.LastName;
                 User.Address = updatedUser.Address ?? User.Address;
                 User.Telephone = updatedUser.Telephone ?? User.Telephone;
+                User.IsActive = updatedUser.IsActive ?? true;
 
                 if (!string.IsNullOrEmpty(password))
                 {

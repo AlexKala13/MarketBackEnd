@@ -28,6 +28,11 @@ namespace MarketBackEnd.Users.Auth.Services.Implementations
                 response.Success = false;
                 response.Message = "User not found";
             }
+            else if (user.IsActive == false)
+            {
+                response.Success = false;
+                response.Message = "User is not active";
+            }
             else if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
             {
                 response.Success = false;
