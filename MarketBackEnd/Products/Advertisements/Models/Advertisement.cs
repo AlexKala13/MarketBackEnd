@@ -10,7 +10,7 @@ namespace MarketBackEnd.Products.Advertisements.Models
         public Category Category { get; set; }
         public int CategoryId { get; set; }
         public decimal Price { get; set; }
-        public DateTime PostDate { get; set; }
+        public DateTime PostDate { get; set; } = DateTime.UtcNow;
         public DateTime DueDate { get; set; }
         public int Status { get; set; }
         public ICollection<Photos>? Photos { get; set; }

@@ -41,6 +41,7 @@ namespace MarketBackEnd.Users.Customer.Services.Implementations
                 }
 
                 User.Email = updatedUser.Email ?? User.Email;
+                User.UserName = updatedUser.UserName ?? User.UserName;
                 User.FirstName = updatedUser.FirstName ?? User.FirstName;
                 User.LastName = updatedUser.LastName ?? User.LastName;
                 User.Address = updatedUser.Address ?? User.Address;

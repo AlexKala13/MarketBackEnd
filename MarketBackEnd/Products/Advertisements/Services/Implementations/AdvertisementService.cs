@@ -171,20 +171,25 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
 
                 if (advertisement != null)
                 {
+                    var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == advertisement.UserId);
+                    var category = await _db.Categories.FirstOrDefaultAsync(c => c.Id == advertisement.CategoryId);
+
                     var advertisementDTO = _mapper.Map<GetAdvertisementDTO>(advertisement);
+                    advertisementDTO.UserName = user != null ? user.UserName : "Unknown";
+                    advertisementDTO.CategoryName = category != null ? category.CategoryName : "Unknown";
 
                     serviceResponse.Data = advertisementDTO;
                 }
                 else
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = "Adverisement not found.";
+                    serviceResponse.Message = "Advertisement not found.";
                 }
             }
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Adverisement not found " + ex.Message;
+                serviceResponse.Message = "Advertisement not found " + ex.Message;
             }
             return serviceResponse;
         }
@@ -226,17 +231,29 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
 
                 if (advertisements.Any())
                 {
+                    var advertisementsDTO = new List<GetAdvertisementsDTO>();
 
-                    var advertisementsDTO = advertisements.Select(advertisement => new GetAdvertisementsDTO
+                    foreach (var advertisement in advertisements)
                     {
-                        Id = advertisement.Id,
-                        Name = advertisement.Name,
-                        CategoryId = advertisement.CategoryId,
-                        Price = advertisement.Price,
-                        PostDate = advertisement.PostDate,
-                        Status = advertisement.Status,
-                        Photo = photos.FirstOrDefault(p => p.AdvertisementId == advertisement.Id)
-                    }).ToList();
+                        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == advertisement.UserId);
+                        var category = await _db.Categories.FirstOrDefaultAsync(c => c.Id == advertisement.CategoryId);
+
+                        var advertisementDTO = new GetAdvertisementsDTO
+                        {
+                            Id = advertisement.Id,
+                            Name = advertisement.Name,
+                            CategoryId = advertisement.CategoryId,
+                            CategoryName = category != null ? category.CategoryName : "Unknown",
+                            Price = advertisement.Price,
+                            PostDate = advertisement.PostDate,
+                            Status = advertisement.Status,
+                            Photo = photos.FirstOrDefault(p => p.AdvertisementId == advertisement.Id),
+                            UserId = advertisement.UserId,
+                            UserName = user != null ? user.UserName : "Unknown"
+                        };
+
+                        advertisementsDTO.Add(advertisementDTO);
+                    }
 
                     serviceResponse.Data = advertisementsDTO;
                 }

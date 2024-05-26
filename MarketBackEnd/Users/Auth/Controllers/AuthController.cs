@@ -23,6 +23,7 @@ namespace MarketBackEnd.Users.Auth.Controllers
             var response = await _authRepository.Register(new User
             {
                 Email = request.Email,
+                UserName = request.UserName,
                 Address = request.Address,
                 FirstName = request.FirstName,
                 LastName = request.LastName,

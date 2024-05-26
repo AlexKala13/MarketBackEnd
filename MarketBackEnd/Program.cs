@@ -1,3 +1,5 @@
+using MarketBackEnd.PaymentsAndCart.Services.Implementations;
+using MarketBackEnd.PaymentsAndCart.Services.Interfaces;
 using MarketBackEnd.Products.Advertisements.Services.Implementations;
 using MarketBackEnd.Products.Advertisements.Services.Interfaces;
 using MarketBackEnd.Shared.Data;
@@ -40,6 +42,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAdvertisementService, AdvertisementService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
