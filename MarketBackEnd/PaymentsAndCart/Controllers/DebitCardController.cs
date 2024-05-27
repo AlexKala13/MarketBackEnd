@@ -12,9 +12,9 @@ namespace MarketBackEnd.PaymentsAndCart.Controllers
     [ApiController]
     public class DebitCardController : ControllerBase
     {
-        private readonly IPaymentService _paymentService;
+        private readonly ICardService _paymentService;
 
-        public DebitCardController(IPaymentService paymentService)
+        public DebitCardController(ICardService paymentService)
         {
             _paymentService = paymentService;
         }
