@@ -19,6 +19,7 @@ namespace MarketBackEnd.Shared
                 .ForMember(dest => dest.Photos, opt => opt.Ignore());
             CreateMap<DebitCard, GetDebitCardDTO>().ReverseMap();
             CreateMap<DebitCard, AddDebitCardDTO>().ReverseMap();
+            CreateMap<Orders, GetOrderDTO>().ReverseMap();
             CreateMap<Orders, AddOrderDTO>().ReverseMap();
         }
     }

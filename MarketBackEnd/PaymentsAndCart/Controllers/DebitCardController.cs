@@ -26,7 +26,7 @@ namespace MarketBackEnd.PaymentsAndCart.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> AddAdvertisement(AddDebitCardDTO newCard)
+        public async Task<IActionResult> AddCard(AddDebitCardDTO newCard)
         {
             var response = await _paymentService.AddDebitCard(newCard);
             if (response.Success)
@@ -36,8 +36,30 @@ namespace MarketBackEnd.PaymentsAndCart.Controllers
             return BadRequest(response);
         }
 
+        [HttpPost("AddToBalance")]
+        public async Task<ActionResult<ServiceResponse<bool>>> AmountToBalance(int debitCard, int userId, decimal amount)
+        {
+            var response = await _paymentService.AddToBalance(debitCard, userId, amount);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpPost("AddToCard")]
+        public async Task<ActionResult<ServiceResponse<bool>>> AmountToCard(int debitCard, int userId, decimal amount)
+        {
+            var response = await _paymentService.AddToCard(debitCard, userId, amount);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult<ServiceResponse<string>>> DeleteAdvertisement(int id, int userId)
+        public async Task<ActionResult<ServiceResponse<string>>> DeleteCard(int id, int userId)
         {
             return await _paymentService.DeleteDebitCard(id, userId);
         }

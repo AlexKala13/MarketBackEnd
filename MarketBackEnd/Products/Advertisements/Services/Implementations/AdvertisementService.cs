@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MarketBackEnd.PaymentsAndCart.Services.Interfaces;
 using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
 using MarketBackEnd.Products.Advertisements.Models;
 using MarketBackEnd.Products.Advertisements.Services.Interfaces;
@@ -14,17 +15,28 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
+        private readonly IPaymentService _paymentService;
 
-        public AdvertisementService(ApplicationDbContext db, IMapper mapper, IUserService userService)
+        public AdvertisementService(ApplicationDbContext db, IMapper mapper, IUserService userService, IPaymentService paymentService)
         {
             _db = db;
             _mapper = mapper;
             _userService = userService;
+            _paymentService = paymentService;
         }
 
         public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(int userId, CreateAdvertisementDTO newAd)
         {
             var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
+            var paymentConfirmation = await _paymentService.AdvertisementPayment(userId, newAd.Status);
+            
+            if (!paymentConfirmation)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Failed to process payment.";
+                return serviceResponse;
+            }
+
             var advertisement = _mapper.Map<Advertisement>(newAd);
             advertisement.UserId = userId;
 
@@ -117,6 +129,19 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
                     serviceResponse.Success = false;
                     serviceResponse.Message = "Access denied.";
                     return serviceResponse;
+                }
+
+                bool statusChanged = advertisement.Status != updatedAd.Status;
+
+                if (statusChanged && updatedAd.Status > 0)
+                {
+                    bool paymentResult = await _paymentService.AdvertisementPayment(userId, updatedAd.Status);
+                    if (!paymentResult)
+                    {
+                        serviceResponse.Success = false;
+                        serviceResponse.Message = "Failed to process payment for advertisement status change.";
+                        return serviceResponse;
+                    }
                 }
 
                 advertisement.Name = updatedAd.Name ?? advertisement.Name;

@@ -14,15 +14,17 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Implementations
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
+        private readonly IPaymentService _paymentService;
 
-        public OrderService(ApplicationDbContext db, IMapper mapper, IUserService userService)
+        public OrderService(ApplicationDbContext db, IMapper mapper, IUserService userService, IPaymentService paymentService)
         {
             _db = db;
             _mapper = mapper;
             _userService = userService;
+            _paymentService = paymentService;
         }
 
-        public async Task<ServiceResponse<GetOrderDTO>> AddOrder(AddOrderDTO newOrder)
+        public async Task<ServiceResponse<GetOrderDTO>> AddOrder(AddOrderDTO newOrder, int? debitCardId)
         {
             var response = new ServiceResponse<GetOrderDTO>();
             try
@@ -33,6 +35,16 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Implementations
                     response.Message = "Order parameters are empty or null.";
                     return response;
                 }
+
+                var paymentConfirm = await _paymentService.ProductPurchase(debitCardId, newOrder.BuyerId, newOrder.SellerId, newOrder.Price);
+
+                if (!paymentConfirm)
+                {
+                    response.Success = false;
+                    response.Message = "Failed to process payment.";
+                    return response;
+                }
+
                 var order = _mapper.Map<Orders>(newOrder);
 
                 await _db.Orders.AddAsync(order);

@@ -1,4 +1,5 @@
 ﻿using MarketBackEnd.PaymentsAndCart.DTOs.Orders;
+using MarketBackEnd.PaymentsAndCart.Services.Implementations;
 using MarketBackEnd.PaymentsAndCart.Services.Interfaces;
 using MarketBackEnd.Shared.Model;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,17 @@ namespace MarketBackEnd.PaymentsAndCart.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetOrderDTO>>>> GetAll(int userId)
         {
             return await _orderService.GetOrders(userId);
+        }
+
+        [HttpPost("Add")]
+        public async Task<ActionResult<ServiceResponse<GetOrderDTO>>> AddCard(AddOrderDTO newOrder, int? debitCardId)
+        {
+            var response = await _orderService.AddOrder(newOrder, debitCardId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
         }
     }
 }
