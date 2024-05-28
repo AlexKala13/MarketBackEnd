@@ -1,10 +1,12 @@
-﻿using MarketBackEnd.Shared.Data;
+﻿using MarketBackEnd.EmailSender.Services.Interfaces;
+using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
 using MarketBackEnd.Users.Auth.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace MarketBackEnd.Users.Auth.Services.Implementations
 {
@@ -12,11 +14,13 @@ namespace MarketBackEnd.Users.Auth.Services.Implementations
     {
         private readonly ApplicationDbContext _db;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public AuthRepository(ApplicationDbContext db, IConfiguration configuration)
+        public AuthRepository(ApplicationDbContext db, IConfiguration configuration, IEmailService emailService)
         {
             _db = db;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task<ServiceResponse<string>> Login(string email, string password)
@@ -65,6 +69,75 @@ namespace MarketBackEnd.Users.Auth.Services.Implementations
             response.Data = user.Id;
             return response;
         }
+
+        public async Task<ServiceResponse<string>> ForgotPassword(string email)
+        {
+            var response = new ServiceResponse<string>();
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found";
+                return response;
+            }
+
+            try
+            {
+                var token = GenerateResetToken();
+
+                user.PasswordResetToken = token;
+                user.ResetTokenExpires = DateTime.Now.AddHours(1);
+                await _db.SaveChangesAsync();
+
+                await _emailService.SendPasswordResetEmail(user.Email, token);
+
+                response.Success = true;
+                response.Message = "Password reset token sent.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Failed to send password reset email: " + ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<string>> ResetPassword(string email, string token, string newPassword)
+        {
+            var response = new ServiceResponse<string>();
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.PasswordResetToken == token && x.ResetTokenExpires > DateTime.Now && x.Email == email);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "Invalid or expired token";
+                return response;
+            }
+
+            CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.PasswordResetToken = null;
+            user.ResetTokenExpires = null;
+
+            await _db.SaveChangesAsync();
+
+            response.Success = true;
+            response.Message = "Password has been reset";
+            return response;
+        }
+
+        public string GenerateResetToken()
+        {
+            const string chars = "0123456789";
+            var random = new Random();
+            var token = new string(Enumerable.Repeat(chars, 6)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            return token;
+        }
+
 
         public async Task<bool> UserExists(string email)
         {

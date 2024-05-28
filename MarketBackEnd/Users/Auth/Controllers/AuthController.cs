@@ -47,5 +47,27 @@ namespace MarketBackEnd.Users.Auth.Controllers
             }
             return Ok(response);
         }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<ActionResult<ServiceResponse<string>>> ForgotPassword(ForgotPasswordDTO request)
+        {
+            var response = await _authRepository.ForgotPassword(request.Email);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<ActionResult<ServiceResponse<string>>> ResetPassword(ResetPasswordDTO request)
+        {
+            var response = await _authRepository.ResetPassword(request.Email, request.Token, request.NewPassword);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
     }
 }

@@ -16,5 +16,7 @@
         public bool IsAdmin { get; set; } = false;
         public bool IsActive { get; set; } = true;
         public decimal Balance { get; set; } = 0;
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpires { get; set; }
     }
 }

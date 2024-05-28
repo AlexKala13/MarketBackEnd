@@ -218,11 +218,17 @@ namespace MarketBackEnd.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<DateTime>("RegisterDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ResetTokenExpires")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Telephone")

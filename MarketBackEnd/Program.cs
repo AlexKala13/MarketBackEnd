@@ -1,3 +1,5 @@
+using MarketBackEnd.EmailSender.Services.Implementations;
+using MarketBackEnd.EmailSender.Services.Interfaces;
 using MarketBackEnd.PaymentsAndCart.Services.Implementations;
 using MarketBackEnd.PaymentsAndCart.Services.Interfaces;
 using MarketBackEnd.Products.Advertisements.Services.Implementations;
@@ -45,6 +47,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
