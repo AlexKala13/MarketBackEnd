@@ -1,6 +1,7 @@
 ﻿using MarketBackEnd.EmailSender.Services.Interfaces;
 using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
+using MarketBackEnd.Users.Auth.DTOs;
 using MarketBackEnd.Users.Auth.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -171,7 +172,8 @@ namespace MarketBackEnd.Users.Auth.Services.Implementations
             List<Claim> claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Email)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8

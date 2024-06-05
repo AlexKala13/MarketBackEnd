@@ -1,4 +1,5 @@
 ﻿using MarketBackEnd.Shared.Model;
+using MarketBackEnd.Users.Auth.DTOs;
 
 namespace MarketBackEnd.Users.Auth.Services.Interfaces
 {
