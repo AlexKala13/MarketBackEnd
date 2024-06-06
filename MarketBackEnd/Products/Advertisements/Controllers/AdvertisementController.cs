@@ -1,4 +1,6 @@
-﻿using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
+﻿using MarketBackEnd.Products.Advertisements.DTOs;
+using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
+using MarketBackEnd.Products.Advertisements.Models;
 using MarketBackEnd.Products.Advertisements.Services.Interfaces;
 using MarketBackEnd.Shared.Model;
 using Microsoft.AspNetCore.Authorization;
@@ -33,13 +35,36 @@ namespace MarketBackEnd.Products.Advertisements.Controllers
         [HttpPost("Upload")]
         public async Task<IActionResult> AddAdvertisement([FromBody] CreateAdvertisementDTO newAd, int userId)
         {
-            var response = await _advertisementService.AddAdvertisement(userId, newAd);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var photoBytesList = new List<byte[]>();
+            foreach (var base64String in newAd.Photos)
+            {
+                photoBytesList.Add(Convert.FromBase64String(base64String));
+            }
+
+            var advertisement = new NewAdvertisementDTO
+            {
+                Name = newAd.Name,
+                Description = newAd.Description,
+                CategoryId = newAd.CategoryId,
+                Price = newAd.Price,
+                DueDate = newAd.DueDate,
+                Status = newAd.Status,
+                Photos = photoBytesList
+            };
+
+            var response = await _advertisementService.AddAdvertisement(userId,advertisement);
             if (response.Success)
             {
                 return Ok(response);
             }
             return BadRequest(response);
         }
+
 
         [Authorize]
         [HttpPut("Edit/{id}")]

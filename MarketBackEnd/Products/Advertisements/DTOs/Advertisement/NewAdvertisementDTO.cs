@@ -1,6 +1,6 @@
-﻿namespace MarketBackEnd.Products.Advertisements.DTOs.Advertisement
+﻿namespace MarketBackEnd.Products.Advertisements.DTOs
 {
-    public class CreateAdvertisementDTO
+    public class NewAdvertisementDTO
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -8,6 +8,6 @@
         public decimal Price { get; set; }
         public DateTime DueDate { get; set; }
         public int Status { get; set; }
-        public List<string> Photos { get; set; }
+        public List<byte[]> Photos { get; set; }
     }
 }

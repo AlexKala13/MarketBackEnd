@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MarketBackEnd.PaymentsAndCart.Services.Interfaces;
+using MarketBackEnd.Products.Advertisements.DTOs;
 using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
 using MarketBackEnd.Products.Advertisements.Models;
 using MarketBackEnd.Products.Advertisements.Services.Interfaces;
@@ -25,7 +26,7 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
             _paymentService = paymentService;
         }
 
-        public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(int userId, CreateAdvertisementDTO newAd)
+        public async Task<ServiceResponse<GetAdvertisementDTO>> AddAdvertisement(int userId, NewAdvertisementDTO newAd)
         {
             var serviceResponse = new ServiceResponse<GetAdvertisementDTO>();
             var paymentConfirmation = await _paymentService.AdvertisementPayment(userId, newAd.Status);
