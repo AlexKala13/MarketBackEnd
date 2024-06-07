@@ -1,4 +1,6 @@
-﻿using MarketBackEnd.Shared.Data;
+﻿using AutoMapper;
+using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
+using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
 using MarketBackEnd.Users.Auth.Services.Implementations;
 using MarketBackEnd.Users.Auth.Services.Interfaces;
@@ -12,11 +14,13 @@ namespace MarketBackEnd.Users.Customer.Services.Implementations
     {
         private readonly ApplicationDbContext _db;
         private readonly IAuthRepository _authRepository;
+        private readonly IMapper _mapper;
 
-        public UserService(ApplicationDbContext db, IAuthRepository authRepository)
+        public UserService(ApplicationDbContext db, IAuthRepository authRepository, IMapper mapper)
         {
             _db = db;
             _authRepository = authRepository;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResponse<User>> EditUser(UserEditDTO updatedUser, string password, int id)
@@ -66,6 +70,31 @@ namespace MarketBackEnd.Users.Customer.Services.Implementations
                 serviceResponse.Message = "Failed to update user: " + ex.Message;
             }
 
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetUserInfoDTO>> GetUserInfo(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetUserInfoDTO>();
+            try
+            {
+                var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == id);
+
+                if (user != null)
+                {
+                    var userInfoDTO = _mapper.Map<GetUserInfoDTO>(user);
+                }
+                else
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "User not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "User not found " + ex.Message;
+            }
             return serviceResponse;
         }
 

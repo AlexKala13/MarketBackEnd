@@ -5,6 +5,7 @@ namespace MarketBackEnd.Users.Customer.Services.Interfaces
 {
     public interface IUserService
     {
+        Task<ServiceResponse<GetUserInfoDTO>> GetUserInfo(int id);
         Task<ServiceResponse<User>> EditUser(UserEditDTO user, string password, int id);
         Task<bool> IsAdmin(int userId);
         bool IsAuthor(int userId, int advertisementUserId);

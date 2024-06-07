@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
 using MarketBackEnd.Shared.Model;
 using MarketBackEnd.Users.Auth.Services.Interfaces;
 using MarketBackEnd.Users.Customer.DTOs;
@@ -19,6 +20,12 @@ namespace MarketBackEnd.Users.Customer.Controllers
         public UserController(IUserService userService)
         {
             _userService = userService;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResponse<GetUserInfoDTO>>> GetSingle(int id)
+        {
+            return await _userService.GetUserInfo(id);
         }
 
         [HttpPut("Edit/{id}")]

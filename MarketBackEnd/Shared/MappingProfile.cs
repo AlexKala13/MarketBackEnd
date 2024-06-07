@@ -6,6 +6,8 @@ using MarketBackEnd.Products.Advertisements.DTOs;
 using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
 using MarketBackEnd.Products.Advertisements.DTOs.Photo;
 using MarketBackEnd.Products.Advertisements.Models;
+using MarketBackEnd.Shared.Model;
+using MarketBackEnd.Users.Customer.DTOs;
 
 namespace MarketBackEnd.Shared
 {
@@ -21,6 +23,7 @@ namespace MarketBackEnd.Shared
             CreateMap<Photos, GetPhotoDTO>().ReverseMap();
             CreateMap<CreateAdvertisementDTO, Advertisement>()
                 .ForMember(dest => dest.Photos, opt => opt.Ignore());
+            CreateMap<User, GetUserInfoDTO>().ReverseMap();
             CreateMap<DebitCard, GetDebitCardDTO>().ReverseMap();
             CreateMap<DebitCard, AddDebitCardDTO>().ReverseMap();
             CreateMap<Orders, GetOrderDTO>().ReverseMap();
