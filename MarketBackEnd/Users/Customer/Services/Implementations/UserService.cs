@@ -83,6 +83,7 @@ namespace MarketBackEnd.Users.Customer.Services.Implementations
                 if (user != null)
                 {
                     var userInfoDTO = _mapper.Map<GetUserInfoDTO>(user);
+                    serviceResponse.Data = userInfoDTO;
                 }
                 else
                 {
