@@ -151,6 +151,10 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
                 advertisement.Price = updatedAd.Price ?? advertisement.Price;
                 advertisement.Status = updatedAd.Status ?? advertisement.Status;
 
+                if (!updatedAd.Photos.Any())
+                {
+                    _db.Photos.RemoveRange(advertisement.Photos);
+                }
                 if (updatedAd.Photos != null && updatedAd.Photos.Any())
                 {
                     _db.Photos.RemoveRange(advertisement.Photos);
