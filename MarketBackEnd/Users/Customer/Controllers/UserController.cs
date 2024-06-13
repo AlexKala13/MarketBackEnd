@@ -31,7 +31,7 @@ namespace MarketBackEnd.Users.Customer.Controllers
         [HttpPut("Edit/{id}")]
         public async Task<ActionResult<ServiceResponse<string>>> UpdateUser(UserEditDTO editedUser, int id)
         {
-            var response = await _userService.EditUser(editedUser, editedUser.Password, id);
+            var response = await _userService.EditUser(editedUser, id);
 
             if (!response.Success)
             {

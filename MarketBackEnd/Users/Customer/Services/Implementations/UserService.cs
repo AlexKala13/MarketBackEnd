@@ -23,7 +23,7 @@ namespace MarketBackEnd.Users.Customer.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<User>> EditUser(UserEditDTO updatedUser, string password, int id)
+        public async Task<ServiceResponse<User>> EditUser(UserEditDTO updatedUser, int id)
         {
             var serviceResponse = new ServiceResponse<User>();
             try
@@ -52,9 +52,15 @@ namespace MarketBackEnd.Users.Customer.Services.Implementations
                 User.Telephone = updatedUser.Telephone ?? User.Telephone;
                 User.IsActive = updatedUser.IsActive ?? true;
 
-                if (!string.IsNullOrEmpty(password))
+                if (!string.IsNullOrEmpty(updatedUser.NewPassword))
                 {
-                    _authRepository.CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+                    if(!_authRepository.VerifyPasswordHash(updatedUser.OldPassword, User.PasswordHash, User.PasswordSalt))
+                    {
+                        serviceResponse.Success = false;
+                        serviceResponse.Message = "Your password is incorrect.";
+                        return serviceResponse;
+                    }
+                    _authRepository.CreatePasswordHash(updatedUser.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
                     User.PasswordHash = passwordHash;
                     User.PasswordSalt = passwordSalt;
                 }
