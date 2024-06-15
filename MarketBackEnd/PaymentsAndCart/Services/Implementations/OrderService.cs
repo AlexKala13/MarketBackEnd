@@ -2,6 +2,7 @@
 using MarketBackEnd.PaymentsAndCart.DTOs.Orders;
 using MarketBackEnd.PaymentsAndCart.Models;
 using MarketBackEnd.PaymentsAndCart.Services.Interfaces;
+using MarketBackEnd.Products.Advertisements.Models;
 using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
 using MarketBackEnd.Users.Customer.Services.Interfaces;
@@ -115,8 +116,35 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Implementations
             var response = new ServiceResponse<List<GetOrderDTO>>();
             try
             {
-                var orders = await _db.Orders.Where(x => x.BuyerId == userId || x.SellerId == userId).ToListAsync();
-                var ordersDTOs = _mapper.Map<List<GetOrderDTO>>(orders);
+                var orders = await _db.Orders
+                    .Include(x => x.Buyer)
+                    .Include(x => x.Seller)
+                    .Include(x => x.Category)
+                    .Where(x => x.BuyerId == userId || x.SellerId == userId)
+                    .ToListAsync();
+
+                var ordersDTOs = new List<GetOrderDTO>();
+
+                foreach (var order in orders)
+                {
+                    var orderDTO = new GetOrderDTO
+                    {
+                        Id = order.Id,
+                        BuyerId = order.BuyerId,
+                        BuyerName = order.Buyer != null ? order.Buyer.UserName : "Unknown",
+                        SellerId = order.SellerId,
+                        SellerName = order.Seller != null ? order.Seller.UserName : "Unknown",
+                        AdvertisementId = order.AdvertisementId,
+                        Status = order.Status,
+                        CategoryId = order.CategoryId,
+                        CategoryName = order.Category != null ? order.Category.CategoryName : "Unknown",
+                        Price = order.Price,
+                        OrderDate = order.OrderDate,
+                        PurchaseDate = order.PurchaseDate
+                    };
+
+                    ordersDTOs.Add(orderDTO);
+                }
 
                 response.Data = ordersDTOs;
                 response.Success = true;
