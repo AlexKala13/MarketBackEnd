@@ -28,6 +28,7 @@ namespace MarketBackEnd.Shared
             CreateMap<DebitCard, AddDebitCardDTO>().ReverseMap();
             CreateMap<Orders, GetOrderDTO>().ReverseMap();
             CreateMap<Orders, AddOrderDTO>().ReverseMap();
+            CreateMap<GetOrderDTO, AddOrderDTO>().ReverseMap();
         }
     }
 }

@@ -15,6 +15,7 @@ namespace MarketBackEnd.PaymentsAndCart.DTOs.Orders
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public decimal Price { get; set; }
+        public DateTime OrderDate { get; set; }
         public DateTime PurchaseDate { get; set; }
     }
 }

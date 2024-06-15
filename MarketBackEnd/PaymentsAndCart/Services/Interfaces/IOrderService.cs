@@ -6,7 +6,7 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Interfaces
     public interface IOrderService
     {
         Task<ServiceResponse<List<GetOrderDTO>>> GetOrders(int userId);
-        Task<ServiceResponse<GetOrderDTO>> AddOrder(AddOrderDTO newOrder, int? debitCardId);
+        Task<ServiceResponse<List<GetOrderDTO>>> AddOrders(List<AddOrderDTO> newOrders);
         Task<ServiceResponse<GetOrderDTO>> ChangeOrderStatus(int id, int userId, int newStatus);
     }
 }

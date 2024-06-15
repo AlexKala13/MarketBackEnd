@@ -6,6 +6,7 @@
         public int SellerId { get; set; }
         public int AdvertisementId { get; set; }
         public int CategoryId { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now;
         public decimal Price { get; set; }
     }
 }

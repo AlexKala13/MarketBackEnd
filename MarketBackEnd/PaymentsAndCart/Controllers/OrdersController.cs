@@ -27,9 +27,9 @@ namespace MarketBackEnd.PaymentsAndCart.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<ActionResult<ServiceResponse<GetOrderDTO>>> AddOrder(AddOrderDTO newOrder, int? debitCardId)
+        public async Task<ActionResult<ServiceResponse<List<GetOrderDTO>>>> AddOrder(List<AddOrderDTO> newOrders)
         {
-            var response = await _orderService.AddOrder(newOrder, debitCardId);
+            var response = await _orderService.AddOrders(newOrders);
             if (response.Success)
             {
                 return Ok(response);

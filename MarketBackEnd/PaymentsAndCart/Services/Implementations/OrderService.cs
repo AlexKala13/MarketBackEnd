@@ -24,35 +24,37 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Implementations
             _paymentService = paymentService;
         }
 
-        public async Task<ServiceResponse<GetOrderDTO>> AddOrder(AddOrderDTO newOrder, int? debitCardId)
+        public async Task<ServiceResponse<List<GetOrderDTO>>> AddOrders(List<AddOrderDTO> newOrders)
         {
-            var response = new ServiceResponse<GetOrderDTO>();
+            var response = new ServiceResponse<List<GetOrderDTO>>();
             try
             {
-                if (newOrder == null)
+                if (newOrders == null || !newOrders.Any())
                 {
                     response.Success = false;
                     response.Message = "Order parameters are empty or null.";
                     return response;
                 }
 
-                var paymentConfirm = await _paymentService.ProductPurchase(debitCardId, newOrder.BuyerId, newOrder.SellerId, newOrder.Price);
+                //var paymentConfirm = await _paymentService.ProductPurchase(debitCardId, newOrders.First().BuyerId, newOrders.First().SellerId, newOrders.First().Price);
 
-                if (!paymentConfirm)
-                {
-                    response.Success = false;
-                    response.Message = "Failed to process payment.";
-                    return response;
-                }
+                //if (!paymentConfirm)
+                //{
+                //    response.Success = false;
+                //    response.Message = "Failed to process payment.";
+                //    return response;
+                //}
 
-                var order = _mapper.Map<Orders>(newOrder);
 
-                await _db.Orders.AddAsync(order);
+                var orders = _mapper.Map<List<Orders>>(newOrders);
+                orders.ForEach(order => order.Status = 1);
+
+                await _db.Orders.AddRangeAsync(orders);
                 await _db.SaveChangesAsync();
 
-                response.Data = _mapper.Map<GetOrderDTO>(newOrder);
+                response.Data = _mapper.Map<List<GetOrderDTO>>(newOrders);
                 response.Success = true;
-                response.Message = "Order added successfully.";
+                response.Message = "Orders added successfully.";
             }
             catch (Exception ex)
             {

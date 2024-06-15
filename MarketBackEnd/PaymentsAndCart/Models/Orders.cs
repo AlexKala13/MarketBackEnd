@@ -16,6 +16,7 @@ namespace MarketBackEnd.PaymentsAndCart.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public decimal Price { get; set; }
-        public DateTime PurchaseDate { get; set; } = DateTime.UtcNow;
+        public DateTime OrderDate { get; set; }
+        public DateTime PurchaseDate { get; set; }
     }
 }
