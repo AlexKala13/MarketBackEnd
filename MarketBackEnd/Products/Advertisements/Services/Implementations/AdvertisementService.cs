@@ -256,6 +256,7 @@ namespace MarketBackEnd.Products.Advertisements.Services.Implementations
                     query = query.Where(x => x.Status == status.Value);
                 }
 
+                query = query.Where(x => x.Status != 1);
                 var advertisements = await query.ToListAsync();
                 var photos = await _db.Photos.Where(x => x.IsMain == true).ToListAsync();
 

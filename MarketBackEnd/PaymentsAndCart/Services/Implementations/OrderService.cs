@@ -2,6 +2,7 @@
 using MarketBackEnd.PaymentsAndCart.DTOs.Orders;
 using MarketBackEnd.PaymentsAndCart.Models;
 using MarketBackEnd.PaymentsAndCart.Services.Interfaces;
+using MarketBackEnd.Products.Advertisements.DTOs.Advertisement;
 using MarketBackEnd.Products.Advertisements.Models;
 using MarketBackEnd.Shared.Data;
 using MarketBackEnd.Shared.Model;
@@ -37,16 +38,6 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Implementations
                     return response;
                 }
 
-                //var paymentConfirm = await _paymentService.ProductPurchase(debitCardId, newOrders.First().BuyerId, newOrders.First().SellerId, newOrders.First().Price);
-
-                //if (!paymentConfirm)
-                //{
-                //    response.Success = false;
-                //    response.Message = "Failed to process payment.";
-                //    return response;
-                //}
-
-
                 var orders = _mapper.Map<List<Orders>>(newOrders);
                 orders.ForEach(order => order.Status = 1);
 
@@ -66,35 +57,21 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Implementations
             return response;
         }
 
-        public async Task<ServiceResponse<GetOrderDTO>> ChangeOrderStatus(int id, int userId, int newStatus)
+        public async Task<ServiceResponse<GetOrderDTO>> ChangeOrderStatus(int id)
         {
             var response = new ServiceResponse<GetOrderDTO>();
             try
             {
                 var order = await _db.Orders.FirstOrDefaultAsync(x => x.Id == id);
 
-                bool isAdmin = await _userService.IsAdmin(userId);
-
-                if ((userId != order.BuyerId && userId != order.SellerId) && !isAdmin)
-                {
-                    response.Success = false;
-                    response.Message = "You are not authorized to change the status of this order.";
-                    return response;
-                }
-                else if (order == null)
+                if (order == null)
                 {
                     response.Success = false;
                     response.Message = "Order not found.";
                     return response;
                 }
-                else if (newStatus < 0 || newStatus > 2)
-                {
-                    response.Success = false;
-                    response.Message = "Invalid order status.";
-                    return response;
-                }
 
-                order.Status = newStatus;
+                order.Status = 2;
                 _db.Orders.Update(order);
                 await _db.SaveChangesAsync();
 
@@ -111,17 +88,75 @@ namespace MarketBackEnd.PaymentsAndCart.Services.Implementations
             return response;
         }
 
-        public async Task<ServiceResponse<List<GetOrderDTO>>> GetOrders(int userId)
+        public async Task<ServiceResponse<GetOrderDTO>> ConfirmOrder(int id, int? debitCardId)
+        {
+            var response = new ServiceResponse<GetOrderDTO>();
+            try
+            {
+                var order = await _db.Orders.FirstOrDefaultAsync(x => x.Id == id);
+
+                if (order == null)
+                {
+                    response.Success = false;
+                    response.Message = "Order not found.";
+                    return response;
+                }
+
+                var paymentConfirm = await _paymentService.ProductPurchase(debitCardId, order.BuyerId, order.SellerId, order.Price);
+
+                if (!paymentConfirm)
+                {
+                    response.Success = false;
+                    response.Message = "Failed to process payment.";
+                    return response;
+                }
+
+                order.Status = 3;
+
+                var advertisement = await _db.Advertisements.FirstOrDefaultAsync(x => x.Id == order.AdvertisementId);
+                advertisement.Status = 1;
+
+                var confirmedOrderDTO = _mapper.Map<Orders>(order);
+                
+                _db.Orders.Update(confirmedOrderDTO);
+                _db.Advertisements.Update(advertisement);
+                await _db.SaveChangesAsync();
+
+                response.Data = _mapper.Map<GetOrderDTO>(order);
+                response.Success = true;
+                response.Message = "Orders added successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"An error occurred: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<List<GetOrderDTO>>> GetOrders(int userId, int ordersType)
         {
             var response = new ServiceResponse<List<GetOrderDTO>>();
             try
             {
-                var orders = await _db.Orders
+                var query = _db.Orders.AsQueryable();
+
+                if (ordersType == 0)
+                {
+                    query = query.Where(x => x.BuyerId == userId);
+                }
+                else
+                {
+                    query = query.Where(x => x.SellerId == userId);
+                }
+
+                query = query
                     .Include(x => x.Buyer)
                     .Include(x => x.Seller)
-                    .Include(x => x.Category)
-                    .Where(x => x.BuyerId == userId || x.SellerId == userId)
-                    .ToListAsync();
+                    .Include(x => x.Category);
+
+                var orders = await query.ToListAsync();
 
                 var ordersDTOs = new List<GetOrderDTO>();
 

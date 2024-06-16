@@ -21,15 +21,37 @@ namespace MarketBackEnd.PaymentsAndCart.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<GetOrderDTO>>>> GetAll(int userId)
+        public async Task<ActionResult<ServiceResponse<List<GetOrderDTO>>>> GetAll(int userId, int ordersType)
         {
-            return await _orderService.GetOrders(userId);
+            return await _orderService.GetOrders(userId, ordersType);
         }
 
         [HttpPost("Add")]
         public async Task<ActionResult<ServiceResponse<List<GetOrderDTO>>>> AddOrder(List<AddOrderDTO> newOrders)
         {
             var response = await _orderService.AddOrders(newOrders);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpPut("Confirm")]
+        public async Task<ActionResult<ServiceResponse<GetOrderDTO>>> ConfirmOrder(int orderId, int? debitCardId)
+        {
+            var response = await _orderService.ConfirmOrder(orderId, debitCardId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpPut("ConfirmBySeller")]
+        public async Task<ActionResult<ServiceResponse<GetOrderDTO>>> ConfirmBySeller(int orderId)
+        {
+            var response = await _orderService.ChangeOrderStatus(orderId);
             if (response.Success)
             {
                 return Ok(response);
